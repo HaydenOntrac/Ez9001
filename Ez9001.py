@@ -410,7 +410,7 @@ if calculate_button:
             st.markdown(f'<p class="custom-font">Your ONTRAC Bucket Solution is the: XMOR® {optimal_bucket["bucket_name"]} ({optimal_bucket["bucket_size"]} m³)</p>',unsafe_allow_html=True) 
             st.success(f"Bucket Payload Increase: +{st.session_state.volume_increase} m³ (+{st.session_state.volume_increase_percentage})")
             st.write(f"Matching Excavator Successfully Found.")
-            st.write(f"Your Matching Excavator Safe Working Load at {user_data["reach"]}(m): {swl} kg")
+            st.write(f"Your Matching Excavator Safe Working Load at {user_data["reach"]}m reach: {swl} kg")
             st.write(f"Your XMOR Bucket Total Suspended Load: {optimal_bucket['total_bucket_weight']} kg")
             
             # Display the DataFrame in Streamlit
