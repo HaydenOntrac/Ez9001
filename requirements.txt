@@ -1,1 +1,3 @@
 xlsxwriter
+gspread
+oauth2client
