@@ -8,7 +8,43 @@ import pandas as pd
 import smtplib
 from email.message import EmailMessage
 import io
+import snowflake.connector
 
+# Retrieve credentials from Streamlit secrets
+sf_user = st.secrets["snowflake"]["user"]
+sf_password = st.secrets["snowflake"]["password"]
+sf_account = st.secrets["snowflake"]["account"]
+sf_warehouse = st.secrets["snowflake"]["warehouse"]
+sf_database = st.secrets["snowflake"]["database"]
+sf_schema = st.secrets["snowflake"]["schema"]
+
+# Connect to Snowflake
+def connect_to_snowflake():
+    conn = snowflake.connector.connect(
+        user=sf_user,
+        password=sf_password,
+        account=sf_account,
+        warehouse=sf_warehouse,
+        database=sf_database,
+        schema=sf_schema
+    )
+    return conn
+
+# Function to save email to Snowflake table
+def save_email_to_snowflake(email):
+    conn = connect_to_snowflake()
+    cursor = conn.cursor()
+    cursor.execute(f"USE DATABASE {sf_database};")
+    cursor.execute(f"USE SCHEMA {sf_schema};")
+    
+    # Insert email into Snowflake table
+    cursor.execute(
+        "INSERT INTO user_emails (email) VALUES (%s)", (email,)
+    )
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 # Define custom CSS
 st.markdown("""
@@ -439,6 +475,7 @@ if st.button("Yes Please!"):
     
     if email and '@' in email:  # Check if email is valid
         send_email_with_csv(email, csv_data)
+        save_email_to_snowflake(email)
         st.success("Please check your inbox!")
         # Display the DataFrame in Streamlit        
         # st.write(comparison_df)
